@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Panel | MTECH AI</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: #111631;
+            --border: #1a2040;
+            --blue: #0066ff;
+            --cyan: #00d4ff;
+            --text: #ffffff;
+            --text-gray: #b0b8c8;
+            --text-muted: #6b7a99;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .admin-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .admin-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-header h1 i { color: var(--cyan); }
+        .admin-header a {
+            color: var(--cyan);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .admin-container {
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+        .admin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .admin-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-card h2 i { color: var(--blue); }
+        .admin-card p { color: var(--text-gray); margin-bottom: 20px; font-size: 0.95rem; }
+        .admin-card h3 {
+            font-size: 1rem;
+            color: var(--cyan);
+            margin: 20px 0 8px;
+        }
+        .file-list {
+            list-style: none;
+        }
+        .file-list li {
+            padding: 12px 16px;
+            background: rgba(0,102,255,0.05);
+            border: 1px solid rgba(0,102,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .file-list li i { color: var(--blue); min-width: 20px; }
+        .file-list li strong { color: var(--text); }
+        .file-list li span { color: var(--text-gray); font-size: 0.85rem; }
+        .step-list {
+            list-style: none;
+            counter-reset: step;
+        }
+        .step-list li {
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: rgba(0,102,255,0.03);
+            border-left: 3px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            position: relative;
+            counter-increment: step;
+        }
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: -14px;
+            top: 14px;
+            width: 26px;
+            height: 26px;
+            background: var(--blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        code, .code-block {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,102,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--cyan);
+        }
+        .code-block {
+            display: block;
+            padding: 16px 20px;
+            margin: 12px 0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            border: 1px solid rgba(0,102,255,0.15);
+        }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        .alert-info {
+            background: rgba(0,102,255,0.08);
+            border: 1px solid rgba(0,102,255,0.2);
+            color: var(--cyan);
+        }
+        .alert-success {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+        .alert-warning {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.2);
+            color: #f59e0b;
+        }
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            background: rgba(0,102,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .quick-link:hover {
+            border-color: var(--blue);
+            background: rgba(0,102,255,0.1);
+        }
+        .quick-link i { color: var(--blue); font-size: 1.1rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        th { color: var(--cyan); font-weight: 600; }
+        td { color: var(--text-gray); }
+        @media (max-width: 768px) {
+            .admin-header { padding: 12px 16px; }
+            .admin-container { padding: 0 16px; }
+            .admin-card { padding: 20px; }
+            .quick-links { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-header">
+    <h1><i class="fas fa-shield-halved"></i> MTECH AI — Admin Panel</h1>
+    <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a>
+</div>
+
+<div class="admin-container">
+
+    <!-- Quick Links -->
+    <div class="admin-card">
+        <h2><i class="fas fa-link"></i> Quick Links</h2>
+        <p>Website ke important links</p>
+        <div class="quick-links">
+            <a href="index.html" target="_blank" class="quick-link"><i class="fas fa-home"></i> Home Page</a>
+            <a href="about.html" target="_blank" class="quick-link"><i class="fas fa-user"></i> About Page</a>
+            <a href="services.html" target="_blank" class="quick-link"><i class="fas fa-cogs"></i> Services Page</a>
+            <a href="projects.html" target="_blank" class="quick-link"><i class="fas fa-briefcase"></i> Projects Page</a>
+            <a href="contact.html" target="_blank" class="quick-link"><i class="fas fa-envelope"></i> Contact Page</a>
+            <a href="https://github.com/MuneerHussain01/mtech-ai-website" target="_blank" class="quick-link"><i class="fab fa-github"></i> GitHub Repo</a>
+            <a href="https://search.google.com/search-console" target="_blank" class="quick-link"><i class="fab fa-google"></i> Search Console</a>
+            <a href="https://www.linkedin.com/company/mtech-ai/" target="_blank" class="quick-link"><i class="fab fa-linkedin"></i> LinkedIn Page</a>
+        </div>
+    </div>
+
+    <!-- Website Info -->
+    <div class="admin-card">
+        <h2><i class="fas fa-info-circle"></i> Website Information</h2>
+        <p>Current website configuration</p>
+        <table>
+            <tr><th>Item</th><th>Value</th></tr>
+            <tr><td>Live URL</td><td><a href="https://muneerhussain01.github.io/mtech-ai-website/" target="_blank" style="color: var(--cyan);">muneerhussain01.github.io/mtech-ai-website</a></td></tr>
+            <tr><td>Company Email</td><td>mtechai.solutions@gmail.com</td></tr>
+            <tr><td>Hosting</td><td>GitHub Pages (FREE)</td></tr>
+            <tr><td>Form Handler</td><td>FormSubmit.co → mtechai.solutions@gmail.com</td></tr>
+            <tr><td>Source Code</td><td>D:\mtech-ai-website\</td></tr>
+            <tr><td>GitHub Repo</td><td>github.com/MuneerHussain01/mtech-ai-website</td></tr>
+        </table>
+    </div>
+
+    <!-- File Structure -->
+    <div class="admin-card">
+        <h2><i class="fas fa-folder-open"></i> Website Files — Kya Kahan Hai</h2>
+        <p>Har file ka purpose samjhein — taki pata ho kahan kya change karna hai</p>
+        <ul class="file-list">
+            <li><i class="fas fa-file-code"></i> <div><strong>index.html</strong> <span>— Home page (Hero, Services overview, Industries, CTA)</span></div></li>
+            <li><i class="fas fa-file-code"></i> <div><strong>about.html</strong> <span>— About Us, Founder info, Why MTECH AI</span></div></li>
+            <li><i class="fas fa-file-code"></i> <div><strong>services.html</strong> <span>— 9 AI Services detail page</span></div></li>
+            <li><i class="fas fa-file-code"></i> <div><strong>projects.html</strong> <span>— Case Studies + 7-step Process</span></div></li>
+            <li><i class="fas fa-file-code"></i> <div><strong>contact.html</strong> <span>— Contact form (emails go to Gmail)</span></div></li>
+            <li><i class="fas fa-file-code"></i> <div><strong>thanks.html</strong> <span>— Thank you page (after form submit)</span></div></li>
+            <li><i class="fas fa-palette"></i> <div><strong>css/style.css</strong> <span>— All styling, colors, animations, responsive design</span></div></li>
+            <li><i class="fas fa-js"></i> <div><strong>js/main.js</strong> <span>— Animations, typing effect, form handler, navbar</span></div></li>
+            <li><i class="fas fa-image"></i> <div><strong>assets/logo.png</strong> <span>— Company logo</span></div></li>
+            <li><i class="fas fa-image"></i> <div><strong>assets/Banner.png</strong> <span>— Banner image</span></div></li>
+            <li><i class="fas fa-sitemap"></i> <div><strong>sitemap.xml</strong> <span>— Google ke liye pages ki list</span></div></li>
+            <li><i class="fas fa-robot"></i> <div><strong>robots.txt</strong> <span>— Search engines ke liye instructions</span></div></li>
+        </ul>
+    </div>
+
+    <!-- How to Make Changes -->
+    <div class="admin-card">
+        <h2><i class="fas fa-edit"></i> Website Mein Changes Kaise Karein</h2>
+        <p>Koi bhi text, image, ya content change karne ka tarika</p>
+
+        <h3>Option 1: Quick Method (Antigravity/AI se)</h3>
+        <div class="alert alert-success">
+            <i class="fas fa-magic"></i> <strong>Sabse easy:</strong> Mujhe (Antigravity) bol dein kya change karna hai — main 2 minute mein update karke live push kar dunga!
+        </div>
+
+        <h3>Option 2: Khud Manually Edit Karein</h3>
+        <ol class="step-list">
+            <li>
+                <strong>File kholein</strong><br>
+                <span style="color: var(--text-gray);">D:\mtech-ai-website\ mein jo file edit karni hai use kholein (Notepad, VS Code, ya koi bhi editor)</span>
+            </li>
+            <li>
+                <strong>Changes karein</strong><br>
+                <span style="color: var(--text-gray);">Text change karein, image path update karein, ya naya content add karein. Save karein.</span>
+            </li>
+            <li>
+                <strong>Terminal/PowerShell kholein</strong><br>
+                <span style="color: var(--text-gray);">Windows key dabayein → "PowerShell" type karein → Open karein</span>
+            </li>
+            <li>
+                <strong>Ye 3 commands chalayein:</strong><br>
+                <div class="code-block">cd D:\mtech-ai-website
+git add -A
+git commit -m "description of your change"
+git push origin master</div>
+            </li>
+            <li>
+                <strong>2-3 minute wait karein</strong><br>
+                <span style="color: var(--text-gray);">GitHub Pages automatically deploy karega. Website refresh karein!</span>
+            </li>
+        </ol>
+
+        <h3>Option 3: GitHub.com Se Directly Edit</h3>
+        <ol class="step-list">
+            <li>
+                <strong>GitHub repo kholein:</strong><br>
+                <a href="https://github.com/MuneerHussain01/mtech-ai-website" target="_blank" style="color: var(--cyan);">github.com/MuneerHussain01/mtech-ai-website</a>
+            </li>
+            <li>
+                <strong>Jo file edit karni hai us pe click karein</strong><br>
+                <span style="color: var(--text-gray);">e.g., index.html, about.html</span>
+            </li>
+            <li>
+                <strong>Pencil icon (✏️) click karein</strong><br>
+                <span style="color: var(--text-gray);">File editor khul jayega browser mein</span>
+            </li>
+            <li>
+                <strong>Changes karein → "Commit changes" click karein</strong><br>
+                <span style="color: var(--text-gray);">2-3 minute mein live ho jayega!</span>
+            </li>
+        </ol>
+    </div>
+
+    <!-- Common Changes Guide -->
+    <div class="admin-card">
+        <h2><i class="fas fa-wrench"></i> Common Changes — Quick Guide</h2>
+        <p>Ye cheezein aap aksar change karna chahenge</p>
+
+        <h3>📧 Email Change Karna</h3>
+        <p>Sab HTML files mein <code>mtechai.solutions@gmail.com</code> ko naye email se replace karein. Contact form mein FormSubmit action bhi update karein.</p>
+
+        <h3>📱 Phone Number Add Karna</h3>
+        <p><code>contact.html</code> mein contact-details section mein naya contact-item add karein.</p>
+
+        <h3>🖼️ Logo Change Karna</h3>
+        <p>Naya logo <code>assets/logo.png</code> ke naam se save karein (purani file replace ho jayegi). Same naam rakhein!</p>
+
+        <h3>📝 Service Add/Remove Karna</h3>
+        <p><code>services.html</code> edit karein — existing service-detail-card copy karke naya bana sakte hain.</p>
+
+        <h3>📋 Project Add Karna</h3>
+        <p><code>projects.html</code> mein project-card copy karein aur content change karein.</p>
+
+        <h3>👤 Founder Photo Add Karna (Baad Mein)</h3>
+        <p>Photo ko <code>assets/founder.jpg</code> save karein, phir <code>about.html</code> mein founder section mein img tag add karein.</p>
+
+        <h3>🎨 Colors Change Karna</h3>
+        <p><code>css/style.css</code> ke top mein <code>:root</code> section mein sab colors defined hain. Wahan change karein.</p>
+    </div>
+
+    <!-- Contact Form Info -->
+    <div class="admin-card">
+        <h2><i class="fas fa-envelope-open-text"></i> Contact Form — Kaise Kaam Karta Hai</h2>
+        <p>Client jab form submit karta hai to kya hota hai</p>
+
+        <ol class="step-list">
+            <li>Client <strong>contact.html</strong> pe form bharta hai (name, email, project type, message)</li>
+            <li>Form <strong>FormSubmit.co</strong> ko POST hota hai</li>
+            <li><strong>mtechai.solutions@gmail.com</strong> pe email aata hai sab details ke saath</li>
+            <li>Client ko <strong>Thanks page</strong> dikhai deta hai</li>
+        </ol>
+
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> <strong>First Time Setup:</strong> Pehli baar jab koi form submit karega, FormSubmit.co aapko ek <strong>verification email</strong> bhejega mtechai.solutions@gmail.com pe. Us email mein <strong>"Confirm"</strong> link click karein. Uske baad sab emails automatically ayengi!
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> <strong>Test Karein:</strong> Abhi website pe jayein, contact form bharein aur submit karein. Gmail check karein — FormSubmit se verification email ayega. Confirm karein, phir sab kaam karega!
+        </div>
+    </div>
+
+    <!-- SEO Status -->
+    <div class="admin-card">
+        <h2><i class="fab fa-google"></i> Google Search Status</h2>
+        <p>Website ki Google indexing status</p>
+        <table>
+            <tr><th>Page</th><th>Google Status</th></tr>
+            <tr><td>index.html (Home)</td><td style="color: #10b981;">✅ Indexed</td></tr>
+            <tr><td>projects.html</td><td style="color: #10b981;">✅ Indexed</td></tr>
+            <tr><td>about.html</td><td style="color: #10b981;">✅ Indexed</td></tr>
+            <tr><td>contact.html</td><td style="color: #10b981;">✅ Indexed</td></tr>
+            <tr><td>services.html</td><td style="color: #f59e0b;">⏳ Pending</td></tr>
+        </table>
+        <div class="alert alert-info">
+            <i class="fas fa-search"></i> Google pe search karein: <code>site:muneerhussain01.github.io/mtech-ai-website</code> — ye dikhayega kaunse pages indexed hain.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

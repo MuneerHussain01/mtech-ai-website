@@ -196,30 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        contactForm.addEventListener('submit', function(e) {
             const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             submitBtn.disabled = true;
-            
-            // Collect form data
-            const formData = new FormData(contactForm);
-            
-            // For now, since we don't have Web3Forms key, show success
-            // In production, replace with actual API call
-            try {
-                // Simulate sending (replace with actual Web3Forms when key is available)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                showToast('✅ Message sent successfully! We\'ll get back to you soon.', 'success');
-                contactForm.reset();
-            } catch (error) {
-                showToast('❌ Failed to send message. Please try again.', 'error');
-            } finally {
-                submitBtn.innerHTML = originalBtnText;
-                submitBtn.disabled = false;
-            }
+            // Form will submit natively to FormSubmit.co via action attribute
+            // No need to prevent default - let the form POST naturally
         });
     }
 
